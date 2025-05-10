@@ -30,6 +30,8 @@ The number of nodes in the list is sz.
 
 Follow up: Could you do this in one pass?  
 
+### With Double Pass
+
 ```python
 # Definition for singly-linked list.
 # class ListNode(object):
@@ -64,4 +66,35 @@ class Solution(object):
                     return head
             ptr = ptr.next
             count += 1 
+```
+
+### With Single Pass
+
+```python
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def removeNthFromEnd(self, head, n):
+        """
+        :type head: Optional[ListNode]
+        :type n: int
+        :rtype: Optional[ListNode]
+        """
+        ptr = head
+        length = 0
+        list_arr =[]
+        while ptr:
+            list_arr.append(ptr)
+            length+=1
+            ptr = ptr.next
+        if length == n:
+            head = head.next
+            return head
+        ptr = head
+        el_index = length - n
+        list_arr[el_index-1].next = list_arr[el_index-1].next.next
+        return head
 ```
