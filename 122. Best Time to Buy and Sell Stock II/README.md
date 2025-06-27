@@ -33,6 +33,118 @@ Explanation: There is no way to make a positive profit, so we never buy the stoc
 1 <= prices.length <= 3 * 104  
 0 <= prices[i] <= 104
 
+### with Recursion
+
+```python
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        size = len(prices)
+
+        def rec_trade(idx, buy_flag):
+            if idx == size:
+                return 0
+            if buy_flag:
+                profit = max((-prices[idx] + rec_trade(idx+1, 0)), (rec_trade(idx+1, 1)))
+            else:
+                profit = max((prices[idx] + rec_trade(idx+1, 1)),(rec_trade(idx+1, 0)))
+
+            return profit
+        
+        x = rec_trade(0, 1)
+        return x
+```
+
+### With Dynamic Programing
+
+```python
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        size = len(prices)
+
+        dp_arr = [[-1 for _ in range(2)] for _ in range(size)]
+
+        def rec_trade(idx, buy_flag):
+            if idx == size:
+                return 0
+            if dp_arr[idx][buy_flag] == -1:
+                if buy_flag:
+                    profit = max((-prices[idx] + rec_trade(idx+1, 0)), (rec_trade(idx+1, 1)))
+                else:
+                    profit = max((prices[idx] + rec_trade(idx+1, 1)),(rec_trade(idx+1, 0)))
+                
+                dp_arr[idx][buy_flag] = profit
+
+            return dp_arr[idx][buy_flag]
+        
+        x = rec_trade(0, 1)
+        return x
+```
+
+### With Dynamic Programing (Tabulation)
+
+```python
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        size = len(prices)
+
+        dp_arr = [[0 for _ in range(2)] for _ in range(size+1)]
+
+        dp_arr[size][0] = dp_arr[size][1] = 0
+
+        for idx in range(size-1, -1, -1):
+            for buy_flag in range(0, 2):
+
+                if buy_flag:
+                    profit = max((-prices[idx] + dp_arr[idx+1][0]), (dp_arr[idx+1][1]))
+                else:
+                    profit = max((prices[idx] + dp_arr[idx+1][1]),(dp_arr[idx+1][0]))
+                
+                dp_arr[idx][buy_flag] = profit
+
+        return dp_arr[0][1]
+```
+
+### With Dynamic Programing (Space Optimized)
+
+```python
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        size = len(prices)
+
+        prev_arr = [0 for _ in range(2)]
+
+        for idx in range(size-1, -1, -1):
+            cur_arr = [0 for _ in range(2)]
+            for buy_flag in range(0, 2):
+                if buy_flag:
+                    profit = max((-prices[idx] + prev_arr[0]), (prev_arr[1]))
+                else:
+                    profit = max((prices[idx] + prev_arr[1]),(prev_arr[0]))
+
+                cur_arr[buy_flag] = profit
+            prev_arr = cur_arr
+
+        return prev_arr[1]
+```
+
+### Most Optimal
+
 ```python
 class Solution(object):
     def maxProfit(self, prices):
